@@ -9,10 +9,10 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.everis</groupId>
-	<artifactId>bootcoin</artifactId>
+	<artifactId>purchase</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>bootcoin</name>
-	<description>Bootcoin Spring Boot</description>
+	<name>purchase</name>
+	<description>Purchase Spring Boot</description>
 	<properties>
 		<java.version>1.8</java.version>
 		<spring-cloud.version>2020.0.3</spring-cloud.version>

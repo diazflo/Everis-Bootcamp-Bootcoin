@@ -5,10 +5,8 @@ import com.everis.bootcoin.entity.PurchaseRequest;
 import com.everis.bootcoin.service.PurchaseService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 @Slf4j
@@ -26,5 +24,10 @@ public class PurchaseController {
     @PostMapping("/purchase")
     public Mono<PurchaseBootCoin> purchaseBootCoin(@RequestBody PurchaseRequest request){
         return service.purchaseBootCoin(request);
+    }
+
+    @GetMapping("/retrievePurchaseByCustomer/{dniOrPhoneNumber}")
+    public Flux<PurchaseBootCoin> getAllPurchaseByCustomer(@PathVariable String dniOrPhoneNumber){
+        return service.getAllPurchaseByCustomer(dniOrPhoneNumber);
     }
 }

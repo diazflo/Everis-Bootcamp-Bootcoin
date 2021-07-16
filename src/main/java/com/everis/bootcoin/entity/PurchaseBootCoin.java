@@ -1,5 +1,7 @@
 package com.everis.bootcoin.entity;
 
+import com.everis.bootcoin.entity.currency.BootCoin;
+import com.everis.bootcoin.entity.wallet.Wallet;
 import lombok.Builder;
 import lombok.Data;
 import org.springframework.data.annotation.Id;
@@ -20,4 +22,5 @@ public class PurchaseBootCoin {
     private String paymentMethod;
     private Date createDate;
     private Date lastUpdateDate;
+    private Wallet customerWallet;
 }

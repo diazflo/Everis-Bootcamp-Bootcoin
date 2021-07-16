@@ -1,4 +1,4 @@
-package com.everis.bootcoin.entity;
+package com.everis.bootcoin.entity.wallet;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -7,17 +7,16 @@ import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-import java.math.BigDecimal;
-import java.util.Date;
-import java.util.UUID;
-
 @Data
 @Document
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class BootCoin {
+public class Person {
+    @Id
+    private String dni;
     private String name;
-    private BigDecimal purchaseCoin;
-    private BigDecimal sellCoin;
+    private String phoneNumber;
+    private String phoneImei;
+    private String email;
 }

@@ -9,6 +9,8 @@ import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+import java.util.UUID;
+
 @Slf4j
 @RestController
 @RequestMapping("/bootCoin")
@@ -27,7 +29,18 @@ public class PurchaseController {
     }
 
     @GetMapping("/retrievePurchaseByCustomer/{dniOrPhoneNumber}")
-    public Flux<PurchaseBootCoin> getAllPurchaseByCustomer(@PathVariable String dniOrPhoneNumber){
+    public Flux<PurchaseBootCoin> getAllPurchaseByCustomer(@PathVariable("dniOrPhoneNumber") String dniOrPhoneNumber){
         return service.getAllPurchaseByCustomer(dniOrPhoneNumber);
     }
+
+    @GetMapping("/purchase")
+    public Flux<PurchaseBootCoin> getAllPurchaseBootCoin(){
+        return service.getAllPurchaseBootCoin();
+    }
+
+    @GetMapping("/purchase/{id}")
+    public Mono<PurchaseBootCoin> getPurchaseBootCoinById(@PathVariable("id") UUID id){
+        return service.getPurchaseBootCoinById(id);
+    }
+
 }

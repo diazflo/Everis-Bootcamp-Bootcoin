@@ -7,7 +7,5 @@ import reactor.core.publisher.Flux;
 import java.util.UUID;
 
 public interface BootCoinRepository<T extends PurchaseBootCoin> extends ReactiveMongoRepository<T, UUID> {
-    //Flux<T> findAllPurchaseBootCoinByWalletPersonDni(String dniOrPhoneNumber);
-
-    //Flux<T> findAllPurchaseBootCoinByWalletPersonPhoneNumber(String dniOrPhoneNumber);
+    Flux<T> findAllByCustomerWalletId(UUID id);
 }

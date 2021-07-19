@@ -14,6 +14,7 @@ import reactor.core.publisher.Mono;
 
 import java.util.Date;
 import java.util.UUID;
+import java.util.concurrent.atomic.AtomicReference;
 
 @Slf4j
 @Service
@@ -30,38 +31,41 @@ public class PurchaseServiceImpl implements PurchaseService {
 
     @Override
     public Mono<PurchaseBootCoin> purchaseBootCoin(PurchaseRequest request) {
+        Mono<BootCoin> coinMono = getBootCoin();
+        Mono<Wallet> walletMono = getPersonWallet(request.getCustomerToPay().getPhoneNumber());
 
         PurchaseBootCoin bootCoin = PurchaseBootCoin.builder().build();
-        return Mono.just(bootCoin).map(obj -> {
-            obj.setTransactionId(UUID.randomUUID());
+        return Mono.zip(coinMono, walletMono).map(objects -> {
+            bootCoin.setTransactionId(UUID.randomUUID());
 
-            obj.setAmountToChange(request.getAmountRequest());
-            obj.setPaymentMethod(request.getPaymentMethod());
-            obj.setCreateDate(new Date());
-            obj.setLastUpdateDate(new Date());
+            bootCoin.setAmountToChange(request.getAmountRequest());
+            bootCoin.setPaymentMethod(request.getPaymentMethod());
+            bootCoin.setCreateDate(new Date());
+            bootCoin.setLastUpdateDate(new Date());
+            bootCoin.setBootCoin(objects.getT1());
+            bootCoin.setCustomerWallet(objects.getT2());
 
-            Mono<BootCoin> coinMono = getBootCoin();
-            Mono<Wallet> walletMono = getPersonWallet(request.getCustomerToPay().getPhoneNumber());
-
-            coinMono.subscribe(obj::setBootCoin);
-            walletMono.subscribe(obj::setCustomerWallet);
-
-            return obj;
-        }).flatMap(purchaseBootCoin -> {
-            System.out.println(purchaseBootCoin);
-            return repository.save(purchaseBootCoin);
-        });
+            return bootCoin;
+        }).flatMap(repository::save);
     }
 
     @Override
     public Flux<PurchaseBootCoin> getAllPurchaseByCustomer(String dniOrPhoneNumber) {
-        Flux<PurchaseBootCoin> fluxPurchase;
-        if(dniOrPhoneNumber.length()==8){
-            //fluxPurchase = repository.findAllPurchaseBootCoinByWalletPersonDni(dniOrPhoneNumber);
-        } else {
-            //fluxPurchase = repository.findAllPurchaseBootCoinByWalletPersonPhoneNumber(dniOrPhoneNumber);
-        }
-        return null;
+        AtomicReference<UUID> id = null;
+        Mono<Wallet> walletMono = getPersonWallet(dniOrPhoneNumber);
+        return walletMono.flatMapMany(wallet -> {
+            return repository.findAllByCustomerWalletId(wallet.getId());
+        });
+    }
+
+    @Override
+    public Flux<PurchaseBootCoin> getAllPurchaseBootCoin() {
+        return repository.findAll();
+    }
+
+    @Override
+    public Mono<PurchaseBootCoin> getPurchaseBootCoinById(UUID id) {
+        return repository.findById(id);
     }
 
     public Mono<BootCoin> getBootCoin() {

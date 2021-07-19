@@ -1,8 +1,8 @@
 package com.everis.bootcoin.service;
 
-import com.everis.bootcoin.entity.currency.BootCoin;
 import com.everis.bootcoin.entity.PurchaseBootCoin;
 import com.everis.bootcoin.entity.PurchaseRequest;
+import com.everis.bootcoin.entity.currency.BootCoin;
 import com.everis.bootcoin.entity.types.StatusPurchaseBootCoin;
 import com.everis.bootcoin.entity.wallet.Wallet;
 import com.everis.bootcoin.repository.BootCoinRepository;
@@ -15,7 +15,6 @@ import reactor.core.publisher.Mono;
 
 import java.util.Date;
 import java.util.UUID;
-import java.util.concurrent.atomic.AtomicReference;
 
 @Slf4j
 @Service
@@ -54,11 +53,8 @@ public class PurchaseServiceImpl implements PurchaseService {
 
     @Override
     public Flux<PurchaseBootCoin> getAllPurchaseByCustomer(String dniOrPhoneNumber) {
-        AtomicReference<UUID> id = null;
         Mono<Wallet> walletMono = getPersonWallet(dniOrPhoneNumber);
-        return walletMono.flatMapMany(wallet -> {
-            return repository.findAllByCustomerWalletId(wallet.getId());
-        });
+        return walletMono.flatMapMany(wallet -> repository.findAllByCustomerWalletId(wallet.getId()));
     }
 
     @Override
@@ -89,4 +85,14 @@ public class PurchaseServiceImpl implements PurchaseService {
                 .bodyToMono(Wallet.class);
     }
 
+    @Override
+    public Mono<PurchaseBootCoin> patchPurchaseBootCoinById(String id, PurchaseBootCoin requestBody) {
+        return repository.findById(UUID.fromString(id)).flatMap(purchaseBootCoin -> {
+            purchaseBootCoin.setPaymentMethod((requestBody.getPaymentMethod() != null)? requestBody.getPaymentMethod(): purchaseBootCoin.getPaymentMethod());
+            purchaseBootCoin.setAmountToChange((requestBody.getAmountToChange() != null)? requestBody.getAmountToChange(): purchaseBootCoin.getAmountToChange());
+            purchaseBootCoin.setStatusPurchase((requestBody.getStatusPurchase() != null)? requestBody.getStatusPurchase(): purchaseBootCoin.getStatusPurchase());
+            purchaseBootCoin.setLastUpdateDate(new Date());
+            return repository.save(purchaseBootCoin);
+        }).switchIfEmpty(Mono.error(new Exception()));
+    }
 }

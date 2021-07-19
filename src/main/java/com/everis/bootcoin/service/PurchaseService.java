@@ -16,4 +16,6 @@ public interface PurchaseService {
     Flux<PurchaseBootCoin> getAllPurchaseBootCoin();
 
     Mono<PurchaseBootCoin> getPurchaseBootCoinById(UUID id);
+
+    Mono<PurchaseBootCoin> patchPurchaseBootCoinById(String id, PurchaseBootCoin requestBody);
 }

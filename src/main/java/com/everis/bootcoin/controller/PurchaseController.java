@@ -24,23 +24,28 @@ public class PurchaseController {
     }
 
     @PostMapping("/purchase")
-    public Mono<PurchaseBootCoin> purchaseBootCoin(@RequestBody PurchaseRequest request){
+    public Mono<PurchaseBootCoin> purchaseBootCoin(@RequestBody PurchaseRequest request) {
         return service.purchaseBootCoin(request);
     }
 
     @GetMapping("/retrievePurchaseByCustomer/{dniOrPhoneNumber}")
-    public Flux<PurchaseBootCoin> getAllPurchaseByCustomer(@PathVariable("dniOrPhoneNumber") String dniOrPhoneNumber){
+    public Flux<PurchaseBootCoin> getAllPurchaseByCustomer(@PathVariable("dniOrPhoneNumber") String dniOrPhoneNumber) {
         return service.getAllPurchaseByCustomer(dniOrPhoneNumber);
     }
 
     @GetMapping("/purchase")
-    public Flux<PurchaseBootCoin> getAllPurchaseBootCoin(){
+    public Flux<PurchaseBootCoin> getAllPurchaseBootCoin() {
         return service.getAllPurchaseBootCoin();
     }
 
     @GetMapping("/purchase/{id}")
-    public Mono<PurchaseBootCoin> getPurchaseBootCoinById(@PathVariable("id") UUID id){
+    public Mono<PurchaseBootCoin> getPurchaseBootCoinById(@PathVariable("id") UUID id) {
         return service.getPurchaseBootCoinById(id);
+    }
+
+    @PatchMapping("/purchase/{id}")
+    public Mono<PurchaseBootCoin> patchPurchaseBootCoinById(@PathVariable("id") String id, @RequestBody PurchaseBootCoin requestBody){
+        return service.patchPurchaseBootCoinById(id, requestBody);
     }
 
 }

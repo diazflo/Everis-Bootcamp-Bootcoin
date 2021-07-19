@@ -30,23 +30,27 @@ public class PurchaseServiceImpl implements PurchaseService {
 
     @Override
     public Mono<PurchaseBootCoin> purchaseBootCoin(PurchaseRequest request) {
+
         PurchaseBootCoin bootCoin = PurchaseBootCoin.builder().build();
         return Mono.just(bootCoin).map(obj -> {
             obj.setTransactionId(UUID.randomUUID());
-            Mono<BootCoin> coinMono = getBootCoin();
-
-            coinMono.subscribe(obj::setBootCoin);
-
-            Mono<Wallet> walletMono = getPersonWallet(request.getCustomerToPay().getPhoneNumber());
-
-            walletMono.subscribe(obj::setCustomerWallet);
 
             obj.setAmountToChange(request.getAmountRequest());
             obj.setPaymentMethod(request.getPaymentMethod());
             obj.setCreateDate(new Date());
             obj.setLastUpdateDate(new Date());
+
+            Mono<BootCoin> coinMono = getBootCoin();
+            Mono<Wallet> walletMono = getPersonWallet(request.getCustomerToPay().getPhoneNumber());
+
+            coinMono.subscribe(obj::setBootCoin);
+            walletMono.subscribe(obj::setCustomerWallet);
+
             return obj;
-        }).flatMap(repository::save);
+        }).flatMap(purchaseBootCoin -> {
+            System.out.println(purchaseBootCoin);
+            return repository.save(purchaseBootCoin);
+        });
     }
 
     @Override

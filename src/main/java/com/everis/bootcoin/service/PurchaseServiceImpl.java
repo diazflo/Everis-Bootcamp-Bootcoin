@@ -8,6 +8,7 @@ import com.everis.bootcoin.entity.wallet.Wallet;
 import com.everis.bootcoin.repository.BootCoinRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Flux;
@@ -19,6 +20,11 @@ import java.util.UUID;
 @Slf4j
 @Service
 public class PurchaseServiceImpl implements PurchaseService {
+    @Value("${lookup.service.uri.walletperson}")
+    private static String WALLET_PERSON_URI;
+    @Value("${lookup.service.uri.bootcoin}")
+    private static String BOOTCOIN_URI;
+
     private static String CURRENCY_BOOT_COIN = "BootCoin";
     private final BootCoinRepository<PurchaseBootCoin> repository;
     private final WebClient.Builder builder;
@@ -68,19 +74,19 @@ public class PurchaseServiceImpl implements PurchaseService {
     }
 
     public Mono<BootCoin> getBootCoin() {
-        log.info("uri " + "localhost:8089/currency/bootcoin/" + CURRENCY_BOOT_COIN);
+        log.info("uri " + BOOTCOIN_URI + "/currency/bootcoin/" + CURRENCY_BOOT_COIN);
         return builder.build()
                 .get()
-                .uri("localhost:8089/currency/bootcoin/" + CURRENCY_BOOT_COIN)
+                .uri(BOOTCOIN_URI + "/currency/bootcoin/" + CURRENCY_BOOT_COIN)
                 .retrieve()
                 .bodyToMono(BootCoin.class);
     }
 
     public Mono<Wallet> getPersonWallet(String valueToFind) {
-        log.info("uri " + "localhost:8086/person/retrieveWalletByPerson/" + valueToFind);
+        log.info("uri " + WALLET_PERSON_URI + "/person/retrieveWalletByPerson/" + valueToFind);
         return builder.build()
                 .get()
-                .uri("localhost:8086/person/retrieveWalletByPerson/" + valueToFind)
+                .uri(WALLET_PERSON_URI + "/person/retrieveWalletByPerson/" + valueToFind)
                 .retrieve()
                 .bodyToMono(Wallet.class);
     }
@@ -88,9 +94,9 @@ public class PurchaseServiceImpl implements PurchaseService {
     @Override
     public Mono<PurchaseBootCoin> patchPurchaseBootCoinById(String id, PurchaseBootCoin requestBody) {
         return repository.findById(UUID.fromString(id)).flatMap(purchaseBootCoin -> {
-            purchaseBootCoin.setPaymentMethod((requestBody.getPaymentMethod() != null)? requestBody.getPaymentMethod(): purchaseBootCoin.getPaymentMethod());
-            purchaseBootCoin.setAmountToChange((requestBody.getAmountToChange() != null)? requestBody.getAmountToChange(): purchaseBootCoin.getAmountToChange());
-            purchaseBootCoin.setStatusPurchase((requestBody.getStatusPurchase() != null)? requestBody.getStatusPurchase(): purchaseBootCoin.getStatusPurchase());
+            purchaseBootCoin.setPaymentMethod((requestBody.getPaymentMethod() != null) ? requestBody.getPaymentMethod() : purchaseBootCoin.getPaymentMethod());
+            purchaseBootCoin.setAmountToChange((requestBody.getAmountToChange() != null) ? requestBody.getAmountToChange() : purchaseBootCoin.getAmountToChange());
+            purchaseBootCoin.setStatusPurchase((requestBody.getStatusPurchase() != null) ? requestBody.getStatusPurchase() : purchaseBootCoin.getStatusPurchase());
             purchaseBootCoin.setLastUpdateDate(new Date());
             return repository.save(purchaseBootCoin);
         }).switchIfEmpty(Mono.error(new Exception()));

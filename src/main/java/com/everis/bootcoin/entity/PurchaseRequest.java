@@ -14,4 +14,5 @@ public class PurchaseRequest {
     private String paymentMethod;
     private BigDecimal amountRequest;
     private Person customerToPay;
+    private String phoneNumberApplicant;
 }

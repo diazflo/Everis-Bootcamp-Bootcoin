@@ -3,6 +3,7 @@ package com.everis.bootcoin.service;
 import com.everis.bootcoin.entity.currency.BootCoin;
 import com.everis.bootcoin.entity.PurchaseBootCoin;
 import com.everis.bootcoin.entity.PurchaseRequest;
+import com.everis.bootcoin.entity.types.StatusPurchaseBootCoin;
 import com.everis.bootcoin.entity.wallet.Wallet;
 import com.everis.bootcoin.repository.BootCoinRepository;
 import lombok.extern.slf4j.Slf4j;
@@ -37,6 +38,7 @@ public class PurchaseServiceImpl implements PurchaseService {
         PurchaseBootCoin bootCoin = PurchaseBootCoin.builder().build();
         return Mono.zip(coinMono, walletMono).map(objects -> {
             bootCoin.setTransactionId(UUID.randomUUID());
+            bootCoin.setPhoneNumberApplicant(request.getPhoneNumberApplicant());
 
             bootCoin.setAmountToChange(request.getAmountRequest());
             bootCoin.setPaymentMethod(request.getPaymentMethod());
@@ -44,6 +46,7 @@ public class PurchaseServiceImpl implements PurchaseService {
             bootCoin.setLastUpdateDate(new Date());
             bootCoin.setBootCoin(objects.getT1());
             bootCoin.setCustomerWallet(objects.getT2());
+            bootCoin.setStatusPurchase(StatusPurchaseBootCoin.PENDENT);
 
             return bootCoin;
         }).flatMap(repository::save);

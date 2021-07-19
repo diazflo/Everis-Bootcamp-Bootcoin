@@ -1,6 +1,7 @@
 package com.everis.bootcoin.entity;
 
 import com.everis.bootcoin.entity.currency.BootCoin;
+import com.everis.bootcoin.entity.types.StatusPurchaseBootCoin;
 import com.everis.bootcoin.entity.wallet.Wallet;
 import lombok.Builder;
 import lombok.Data;
@@ -23,4 +24,6 @@ public class PurchaseBootCoin {
     private Date createDate;
     private Date lastUpdateDate;
     private Wallet customerWallet;
+    private String phoneNumberApplicant;
+    private StatusPurchaseBootCoin statusPurchase;
 }
